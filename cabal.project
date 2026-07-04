@@ -1,0 +1,7 @@
+packages: .
+
+-- The dev host has libgmp.so.10 (runtime) but not the libgmp.so linker symlink
+-- that libgmp-dev would provide, so GHC's gmp-backed integer linking fails.
+-- .libs holds a local libgmp.so -> libgmp.so.10 symlink to satisfy -lgmp.
+package sift
+  extra-lib-dirs: /home/user/src/sift/.libs

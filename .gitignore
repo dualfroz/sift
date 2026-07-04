@@ -1,0 +1,16 @@
+# cabal / stack build tooling
+dist-newstyle/
+dist/
+.stack-work/
+
+# local linker workaround (host-specific libgmp symlink)
+.libs/
+
+# compiled output
+*.hi
+*.o
+
+# os / logs / env
+.DS_Store
+*.log
+.env

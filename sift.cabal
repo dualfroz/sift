@@ -1,0 +1,67 @@
+cabal-version:      3.16
+name:               sift
+version:            0.1.0.0
+synopsis:           DPLL SAT solver with a propositional logic toolkit and DIMACS parser
+license:            NONE
+author:             foksiu
+maintainer:         me@dualfroz.com
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+
+common warnings
+    ghc-options: -Wall
+
+library
+    import:           warnings
+    exposed-modules:  Sift.Types
+                      Sift.Dimacs
+                      Sift.Formula
+                      Sift.Tseitin
+                      Sift.Solver
+                      Sift.Verify
+                      Sift.Pigeonhole
+                      Sift.Stats
+                      Sift.Cdcl
+                      Sift.Cdcl.Heap
+                      Sift.Cdcl.State
+                      Sift.Cdcl.Search
+                      Sift.Cdcl.Incremental
+                      Sift.Preprocess
+                      Sift.Preprocess.Bve
+                      Sift.Encode.Cardinality
+                      Sift.Encode.Queens
+                      Sift.Encode.Coloring
+                      Sift.Encode.Sudoku
+                      Sift.Encode.VertexCover
+                      Sift.Encode.Hamiltonian
+                      Sift.Theory.DiffLogic
+                      Sift.Xor
+                      Sift.Enumerate
+                      Sift.Proof.Drat
+    build-depends:    base ^>=4.18.2.1,
+                      containers,
+                      array
+    hs-source-dirs:   src
+    default-language: GHC2021
+
+executable sift
+    import:           warnings
+    main-is:          Main.hs
+    build-depends:    base ^>=4.18.2.1,
+                      containers,
+                      directory,
+                      filepath,
+                      sift
+    hs-source-dirs:   app
+    default-language: GHC2021
+
+test-suite sift-test
+    import:           warnings
+    default-language: GHC2021
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Main.hs
+    build-depends:    base ^>=4.18.2.1,
+                      containers,
+                      array,
+                      sift
