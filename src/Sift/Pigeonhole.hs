@@ -4,8 +4,6 @@ module Sift.Pigeonhole
 
 import Sift.Types
 
--- pigeonhole pigeons holes encodes: every pigeon sits in some hole, and no two
--- pigeons share a hole. With pigeons > holes the formula is UNSAT.
 pigeonhole :: Int -> Int -> CNF
 pigeonhole pigeons holes = CNF (atLeastOne ++ atMostOne)
   where
