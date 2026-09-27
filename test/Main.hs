@@ -687,10 +687,10 @@ bitVectors 0 = [[]]
 bitVectors m = [ b : rest | b <- [False, True], rest <- bitVectors (m - 1) ]
 
 cardCorrect :: (Int -> [Lit] -> Int -> ([Clause], Int)) -> (Int -> Int -> Bool) -> Int -> Int -> Bool
-cardCorrect enc predicate n k = all check (bitVectors n)
+cardCorrect enc predicate n k = all matchesCount (bitVectors n)
   where
     lits = [ posLit (Var i) | i <- [1 .. n] ]
-    check bits =
+    matchesCount bits =
       let units = zipWith (\i b -> [ if b then posLit (Var i) else negLit (Var i) ]) [1 ..] bits
           (cardClauses, _) = enc k lits (n + 1)
       in isCdclSat (solveCdcl (CNF (cardClauses ++ units)))
@@ -726,7 +726,7 @@ randXorClause numVars s0 =
   let (parity, s1) = randBool s0
       pick v st = let (b, st') = randBool st in (if b then [Var v] else [], st')
       go []       st acc = (acc, st)
-      go (v : vs) st acc = let (xs, st') = pick v st in go vs st' (acc ++ xs)
+      go (v : rest) st acc = let (xs, st') = pick v st in go rest st' (acc ++ xs)
       (vs, s2) = go [1 .. numVars] s1 []
   in (xorClause vs parity, s2)
 
@@ -780,7 +780,10 @@ bruteCycleExists g@(Graph n _) = any ok (permutations [1 .. n])
   where
     adj = adjPairs g
     ok p = all (`elem` adj) (zip p (drop 1 p))
-             && (n < 2 || (last p, head p) `elem` adj)
+             && (n < 2 || closes p)
+    closes p = case p of
+      (first : _) -> (last p, first) `elem` adj
+      []          -> False
 
 hamPathOk :: Graph -> Bool
 hamPathOk g = case solveCdcl (hamiltonianPath g) of
