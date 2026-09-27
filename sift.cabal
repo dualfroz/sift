@@ -1,12 +1,15 @@
-cabal-version:      3.16
+cabal-version:      3.4
 name:               sift
 version:            0.1.0.0
-synopsis:           DPLL SAT solver with a propositional logic toolkit and DIMACS parser
-license:            NONE
-author:             foksiu
-maintainer:         me@dualfroz.com
+synopsis:           CDCL and DPLL SAT solver with preprocessing, DRAT proofs and problem encoders
+license:            MIT
+license-file:       LICENSE
+author:             Michał Fox
+maintainer:         Michał Fox
+category:           Logic
 build-type:         Simple
-extra-doc-files:    CHANGELOG.md
+extra-doc-files:    README.md
+tested-with:        GHC == 9.10.3
 
 common warnings
     ghc-options: -Wall
@@ -38,7 +41,7 @@ library
                       Sift.Xor
                       Sift.Enumerate
                       Sift.Proof.Drat
-    build-depends:    base ^>=4.18.2.1,
+    build-depends:    base >=4.18 && <4.21,
                       containers,
                       array
     hs-source-dirs:   src
@@ -47,7 +50,7 @@ library
 executable sift
     import:           warnings
     main-is:          Main.hs
-    build-depends:    base ^>=4.18.2.1,
+    build-depends:    base >=4.18 && <4.21,
                       containers,
                       directory,
                       filepath,
@@ -61,7 +64,7 @@ test-suite sift-test
     type:             exitcode-stdio-1.0
     hs-source-dirs:   test
     main-is:          Main.hs
-    build-depends:    base ^>=4.18.2.1,
+    build-depends:    base >=4.18 && <4.21,
                       containers,
                       array,
                       sift

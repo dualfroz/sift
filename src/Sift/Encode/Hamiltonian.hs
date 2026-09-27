@@ -76,7 +76,10 @@ validHamiltonianCycle :: Graph -> Assignment -> Bool
 validHamiltonianCycle g@(Graph n _) asn =
   isPermutation n route
     && all (`Set.member` adj) (edgesOfPath route)
-    && (n < 2 || Set.member (last route, head route) adj)
+    && (n < 2 || closesCycle)
   where
     route = decodeHamiltonian n asn
     adj = adjacency g
+    closesCycle = case route of
+      (first : _) -> Set.member (last route, first) adj
+      []          -> False

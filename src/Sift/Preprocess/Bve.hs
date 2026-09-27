@@ -5,7 +5,7 @@ module Sift.Preprocess.Bve
   ) where
 
 import Sift.Types
-import Data.List (foldl')
+import qualified Data.Foldable as Foldable
 import Data.Set (Set)
 import qualified Data.Set as Set
 import qualified Data.Map.Strict as Map
@@ -17,7 +17,7 @@ data BveResult = BveResult
 
 bve :: CNF -> BveResult
 bve cnf =
-  let (finalClauses, elimsRev) = foldl' consider (toSets cnf, []) (allVars cnf)
+  let (finalClauses, elimsRev) = Foldable.foldl' consider (toSets cnf, []) (allVars cnf)
   in BveResult (fromSets finalClauses) (reverse elimsRev)
   where
     consider (clauses, elims) x =
@@ -58,7 +58,7 @@ fromSets = CNF . map Set.toList
 
 reconstructBve :: BveResult -> Assignment -> Assignment
 reconstructBve result asn =
-  foldl' restoreVar (seedFreeVars result asn) (reverse (bveEliminated result))
+  Foldable.foldl' restoreVar (seedFreeVars result asn) (reverse (bveEliminated result))
   where
     restoreVar acc (x, cls) =
       let posNeedsTrue =
@@ -67,7 +67,7 @@ reconstructBve result asn =
 
 seedFreeVars :: BveResult -> Assignment -> Assignment
 seedFreeVars result asn =
-  foldl' (\acc v -> Map.insertWith (\_ old -> old) v True acc) asn freeVars
+  Foldable.foldl' (\acc v -> Map.insertWith (\_ old -> old) v True acc) asn freeVars
   where
     eliminated = Set.fromList (map fst (bveEliminated result))
     freeVars =

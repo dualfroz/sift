@@ -11,7 +11,7 @@ module Sift.Theory.DiffLogic
 import Sift.Types
 import Sift.Verify (satisfies)
 import Sift.Cdcl (CdclResult(..), solveCdcl)
-import Data.List (foldl')
+import qualified Data.Foldable as Foldable
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
@@ -111,7 +111,7 @@ iterateRelax k edges dist preds =
   in iterateRelax (k - 1) edges dist' preds'
 
 relaxRound :: [Asserted] -> Map Int Int -> Map Int Asserted -> (Map Int Int, Map Int Asserted)
-relaxRound edges dist preds = foldl' relax (dist, preds) edges
+relaxRound edges dist preds = Foldable.foldl' relax (dist, preds) edges
   where
     relax (d, p) a =
       let du = Map.findWithDefault 0 (acFrom a) d

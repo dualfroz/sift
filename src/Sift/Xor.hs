@@ -12,7 +12,8 @@ module Sift.Xor
   ) where
 
 import Sift.Types
-import Data.List (foldl', sortOn)
+import Data.List (sortOn)
+import qualified Data.Foldable as Foldable
 import Data.IntSet (IntSet)
 import qualified Data.IntSet as IntSet
 import qualified Data.Map.Strict as Map
@@ -25,10 +26,10 @@ data XorClause = XorClause
 xorClause :: [Var] -> Bool -> XorClause
 xorClause vs parity =
   let raw = map varId vs
-      folded = foldl' (\acc v -> if IntSet.member v acc
-                                   then IntSet.delete v acc
-                                   else IntSet.insert v acc)
-                      IntSet.empty raw
+      folded = Foldable.foldl' (\acc v -> if IntSet.member v acc
+                                            then IntSet.delete v acc
+                                            else IntSet.insert v acc)
+                               IntSet.empty raw
   in XorClause folded parity
 
 xorVarsOf :: XorClause -> [Var]
@@ -93,10 +94,10 @@ gauss system = go [] (map toRow system)
 
 reduce :: [(Int, Row)] -> Row -> Row
 reduce pivots row =
-  foldl' (\acc (pv, prow) ->
-            if IntSet.member pv (rowVars acc) then xorRows acc prow else acc)
-         row
-         (sortOn fst pivots)
+  Foldable.foldl' (\acc (pv, prow) ->
+                     if IntSet.member pv (rowVars acc) then xorRows acc prow else acc)
+                  row
+                  (sortOn fst pivots)
 
 insertPivot :: Int -> Row -> [(Int, Row)] -> [(Int, Row)]
 insertPivot pivotVar row pivots =
@@ -116,7 +117,7 @@ gaussSolve system =
           pivotVars  = IntSet.fromList (map fst pivots)
           freeVars   = IntSet.difference allVarsSet pivotVars
           base       = Map.fromList [ (Var v, False) | v <- IntSet.toList freeVars ]
-          solved     = foldl' assignPivot base pivots
+          solved     = Foldable.foldl' assignPivot base pivots
       in Just solved
   where
     assignPivot acc (pv, row) =

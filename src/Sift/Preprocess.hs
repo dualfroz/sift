@@ -9,7 +9,7 @@ module Sift.Preprocess
   ) where
 
 import Sift.Types
-import Data.List (foldl')
+import qualified Data.Foldable as Foldable
 import Data.Set (Set)
 import qualified Data.Set as Set
 import qualified Data.Map.Strict as Map
@@ -52,7 +52,7 @@ pureLiteralElim cnf = go [] (toSets cnf)
       case pureLiterals clauses of
         []   -> (reverse assigned, fromSets clauses)
         pures ->
-          let clauses' = foldl' (flip removeSatisfied) clauses pures
+          let clauses' = Foldable.foldl' (flip removeSatisfied) clauses pures
           in go (reverse pures ++ assigned) clauses'
 
 pureLiterals :: [Set Lit] -> [Lit]
@@ -88,7 +88,7 @@ fixSelf clauses =
   in if stepped == clauses then clauses else fixSelf stepped
 
 strengthen :: [Set Lit] -> Set Lit -> Set Lit
-strengthen clauses c = foldl' tryLit c (Set.toList c)
+strengthen clauses c = Foldable.foldl' tryLit c (Set.toList c)
   where
     tryLit acc l
       | any (resolvesAway l acc) clauses = Set.delete l acc
@@ -117,4 +117,4 @@ clauseSetEq a b = Set.fromList (toSets a) == Set.fromList (toSets b)
 
 reconstruct :: [Lit] -> Assignment -> Assignment
 reconstruct fixed asn =
-  foldl' (\m l -> Map.insert (litVar l) (litSign l) m) asn fixed
+  Foldable.foldl' (\m l -> Map.insert (litVar l) (litSign l) m) asn fixed
